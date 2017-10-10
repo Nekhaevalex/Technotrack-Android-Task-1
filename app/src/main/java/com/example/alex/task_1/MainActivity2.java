@@ -16,6 +16,7 @@ public class MainActivity2 extends AppCompatActivity {
         int x[] = new int [4];
         int div = 1000;
         int var = count;
+        strToPrint = " ";
         int rest;
         for (int i = 0; i<4; i++) {
             rest = (var/div);
@@ -88,18 +89,19 @@ public class MainActivity2 extends AppCompatActivity {
             counterActive = savedInstanceState.getBoolean(COUNTER_RUN);
             strToPrint = savedInstanceState.getString(SAVED_LABEL);
             txt.setText(strToPrint);
-            if (counterActive == true) {
+            if (counterActive) {
                 activeState();
             } else {
                 defaultState();
             }
         } else {
             count = 0;
+            strToPrint = " ";
         }
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (counterActive == false) {
+                if (!counterActive) {
                     activeState();
                 } else {
                     defaultState();
@@ -107,7 +109,6 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
     }
-
     public void defaultState() {
         btn.setText("Start");
         finalCountdown.cancel();
@@ -120,6 +121,20 @@ public class MainActivity2 extends AppCompatActivity {
         counterActive = true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (stopped && counterActive) {
+            finalCountdown.start();
+        }
+    }
+    public boolean stopped = false;
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finalCountdown.cancel();
+        stopped = true;
+    }
     static final String COUNTER = "counterState";
     static final String COUNTER_RUN = "counterRun";
     static final String SAVED_LABEL = "savedLabel";
@@ -141,7 +156,6 @@ public class MainActivity2 extends AppCompatActivity {
             count++;
             translate();
             txt.setText(strToPrint);
-            strToPrint = " ";
         }
 
         @Override
